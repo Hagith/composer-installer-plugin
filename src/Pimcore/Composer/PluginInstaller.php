@@ -19,13 +19,18 @@ class PluginInstaller extends LibraryInstaller
             return strtoupper($replacement);
         }, $pluginName);
 
+        $docRoot = null;
 
-        $docRootName = './';
+        // backward compatibility
         if ($configDocRoot = $this->composer->getConfig()->get('document-root-path')) {
-            $docRootName = rtrim($configDocRoot, '/');
+            $docRoot = realpath($configDocRoot);
         }
 
-        return $docRootName . '/plugins/' . $pluginName . '/';
+        if (!$docRoot) {
+            $docRoot = dirname($this->composer->getConfig()->get('vendor-dir'));
+        }
+
+        return $docRoot . '/plugins/' . $pluginName;
     }
 
     /**
